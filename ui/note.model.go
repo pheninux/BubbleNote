@@ -50,6 +50,7 @@ func (b *BaseModel) NewNoteModel() *NoteModel {
 	ti.TextStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
 	ti.CharLimit = 156
 	ti.Width = 100
+
 	return &NoteModel{Ti: ti, noteKeyMap: InitNoteKeyMap(), help: help.New()}
 }
 
@@ -63,11 +64,15 @@ func (b *BaseModel) UpdateNotePage(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch msg.String() {
-		case "ctrl+q", "ctrl+c":
+		switch {
+		case key.Matches(msg, b.noteKeyMap.quit):
 			return b, tea.Quit
-		case "ctrl+r":
+		case key.Matches(msg, b.noteKeyMap.previous):
 			b.Cp = MAIN_PAGE
+		case key.Matches(msg, b.noteKeyMap.new):
+		//todo impliment new note
+		case key.Matches(msg, b.noteKeyMap.save):
+			//todo save note
 		}
 
 	case tea.WindowSizeMsg:
