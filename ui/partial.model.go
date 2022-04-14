@@ -7,6 +7,6 @@ import (
 type PartialModel struct {
 }
 
-func (b *BaseModel) titleView() string {
+func (m *Model) titleView() string {
 	return lipgloss.NewStyle().Align(lipgloss.Center).Width(with - 2).Foreground(lipgloss.Color("#D7E00F")).Render("Block Note\n")
 }

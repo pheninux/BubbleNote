@@ -4,11 +4,19 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type BaseModel struct {
-	*MainModel
-	*NoteModel
-	*ListModel
-	Cp int // page cursor
+type Model struct {
+	Page        Pages
+	Cp          int // page cursor
+	NoteService interface {
+		SaveNote(note string) error
+		NoteList() string
+	}
+}
+
+type Pages struct {
+	Main Main
+	Note Note
+	List List
 }
 
 var (
@@ -21,34 +29,38 @@ const (
 	LIST_PAGE
 )
 
-func (b *BaseModel) Init() tea.Cmd {
+func (m *Model) Init() tea.Cmd {
 
 	return func() tea.Msg {
 		return nil
 	}
 }
 
-func (b *BaseModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
-	switch b.Cp {
+	switch m.Cp {
 	case MAIN_PAGE:
-		return b.UpdateMainPage(msg)
+		return m.UpdateMainPage(msg)
 	case NOTE_PAGE:
-		return b.UpdateNotePage(msg)
+		return m.UpdateNotePage(msg)
 	case LIST_PAGE:
-		return b.UpdateListPage(msg)
+		return m.UpdateListPage(msg)
 	}
-	return b, nil
+	return m, nil
 }
 
-func (b *BaseModel) View() string {
-	switch b.Cp {
+func (m *Model) View() string {
+	switch m.Cp {
 	case MAIN_PAGE:
-		return b.ViewMainPage()
+		return m.ViewMainPage()
 	case NOTE_PAGE:
-		return b.ViewNotePage()
+		return m.ViewNotePage()
 	case LIST_PAGE:
-		return b.ViewListPage()
+		return m.ViewListPage()
+	case 5:
+		return "error when saving note"
+	case 6:
+		return "note saved success"
 	default:
 		return "other pages"
 	}

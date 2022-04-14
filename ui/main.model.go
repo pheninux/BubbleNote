@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type MainModel struct {
+type Main struct {
 	selectedChoice int
 }
 
@@ -18,45 +18,45 @@ var (
 	with         = 200
 )
 
-func (b *BaseModel) InitMainPage() tea.Cmd {
+func (m *Model) InitMainPage() tea.Cmd {
 	return func() tea.Msg {
 		return nil
 	}
 }
 
-func (b *BaseModel) UpdateMainPage(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *Model) UpdateMainPage(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+q":
-			return b, tea.Quit
+			return m, tea.Quit
 		case "tab":
-			if b.selectedChoice == 0 {
-				b.selectedChoice++
+			if m.Page.Main.selectedChoice == 0 {
+				m.Page.Main.selectedChoice++
 			} else {
-				b.selectedChoice--
+				m.Page.Main.selectedChoice--
 			}
 		case "enter":
-			switch b.selectedChoice {
+			switch m.Page.Main.selectedChoice {
 			case 0:
-				b.Cp = 1
+				m.Cp = 1
 			case 1:
-				b.Cp = 2
+				m.Cp = 2
 			}
 		}
 	case tea.WindowSizeMsg:
 		with = msg.Width
 	}
-	return b, nil
+	return m, nil
 }
 
-func (b *BaseModel) ViewMainPage() string {
+func (m *Model) ViewMainPage() string {
 	choicesTpl := strings.Builder{}
 	choice := ""
 	// block note choices : choice tpl
 	for i, v := range choices {
 		cursor := " "
-		if b.selectedChoice == i {
+		if m.Page.Main.selectedChoice == i {
 			cursor = ">"
 			choice = termenv.String(v).Foreground(termenv.EnvColorProfile().Color("121")).String()
 		} else {
@@ -74,9 +74,9 @@ func (b *BaseModel) ViewMainPage() string {
 		choicesTpl.WriteString(fmt.Sprintf("%s %s", cursor, choice))
 	}
 
-	return lipgloss.JoinVertical(lipgloss.Center, b.titleView(), lipgloss.NewStyle().Align(lipgloss.Left).Render(choicesTpl.String()), b.mainHelpView())
+	return lipgloss.JoinVertical(lipgloss.Center, m.titleView(), lipgloss.NewStyle().Align(lipgloss.Left).Render(choicesTpl.String()), m.mainHelpView())
 }
 
-func (b *BaseModel) mainHelpView() string {
+func (m *Model) mainHelpView() string {
 	return fmt.Sprintf("\n\n total notes : %v \n tab: switch modes • q: exit", lipgloss.NewStyle().Foreground(lipgloss.Color("#0FE066")).Render("12"))
 }
