@@ -1,59 +1,35 @@
 package dao
 
 import (
+	"BubbleNote/pkg/model"
+	"encoding/json"
 	"fmt"
 	"github.com/boltdb/bolt"
 	"strings"
 )
 
 type NoteRepo struct {
-	//Db  *badger.DB
-	Db  *bolt.DB
-	key int
+	Db *bolt.DB
 }
 
-func (nr *NoteRepo) SaveNote(note string) error {
-
-	//err := nr.Db.Update(func(txn *badger.Txn) error {
-	//	nr.key++
-	//	err := txn.Set([]byte(string(nr.key)), []byte(note))
-	//	return err
-	//})
-	//return err
+func (nr *NoteRepo) SaveNote(n model.Note) error {
 
 	err := nr.Db.Update(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("notes"))
-		key, _ := b.NextSequence()
-		err := b.Put([]byte(string(key)), []byte(note))
+		bucket := tx.Bucket([]byte("notes"))
+		id, _ := bucket.NextSequence()
+		n.ID = int(id)
+		b, err := json.Marshal(n)
+		if err != nil {
+			fmt.Println(err)
+		}
+		err = bucket.Put([]byte(string(n.ID)), b)
 		return err
 	})
 	return err
 }
 
-func (nr *NoteRepo) NoteList() string {
-	//result := strings.Builder{}
-	//err := nr.Db.View(func(txn *badger.Txn) error {
-	//	opts := badger.DefaultIteratorOptions
-	//	opts.PrefetchSize = 10
-	//	it := txn.NewIterator(opts)
-	//	defer it.Close()
-	//	for it.Rewind(); it.Valid(); it.Next() {
-	//		item := it.Item()
-	//		k := item.Key()
-	//		err := item.Value(func(v []byte) error {
-	//			result.WriteString(fmt.Sprintf("key=%s, value=%s\n", k, v))
-	//			return nil
-	//		})
-	//		if err != nil {
-	//			return err
-	//		}
-	//	}
-	//	return nil
-	//})
-	//if err != nil {
-	//	result.WriteString(fmt.Sprintf("Failed to iterator keys and values from the cache."))
-	//}
-	//return result.String()
+func (nr *NoteRepo) NoteList() (string, int) {
+	total := 0
 	result := strings.Builder{}
 	nr.Db.View(func(tx *bolt.Tx) error {
 		// Assume bucket exists and has keys
@@ -62,10 +38,10 @@ func (nr *NoteRepo) NoteList() string {
 		c := b.Cursor()
 
 		for k, v := c.First(); k != nil; k, v = c.Next() {
-			result.WriteString(fmt.Sprintf("key=%s, value=%s\n", k, v))
+			result.WriteString(fmt.Sprintf("key=%v, value=%s\n", k, v))
+			total++
 		}
-
 		return nil
 	})
-	return result.String()
+	return result.String(), total
 }

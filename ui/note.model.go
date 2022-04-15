@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"BubbleNote/pkg/model"
 	"fmt"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
@@ -8,6 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"strings"
+	"time"
 )
 
 type Note struct {
@@ -72,8 +74,10 @@ func (m *Model) UpdateNotePage(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.Page.Note.noteKeyMap.new):
 		//todo impliment new note
 		case key.Matches(msg, m.Page.Note.noteKeyMap.save):
-			//todo save note
-			if err := m.NoteService.SaveNote(m.Page.Note.Ti.Value()); err != nil {
+			n := model.Note{}
+			n.Content = m.Page.Note.Ti.Value()
+			n.CreatedAt = time.Now()
+			if err := m.NoteService.SaveNote(n); err != nil {
 				fmt.Println(err)
 			} else {
 				fmt.Println("success")
@@ -88,6 +92,7 @@ func (m *Model) UpdateNotePage(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *Model) ViewNotePage() string {
+
 	ui := strings.Builder{}
 	ui.WriteString(m.titleView())
 	ui.WriteString(m.Page.Note.Ti.View())

@@ -11,13 +11,8 @@ import (
 )
 
 func main() {
-	//db, err := openDB("./db/")
-	//if err != nil {
-	//	panic(err)
-	//}
-	//defer db.Close()
 
-	db, err := openBoltDB("./dbBolt/bubble.db")
+	db, err := openBoltDB("./db/bubble.db")
 	if err != nil {
 		panic(err)
 	}
@@ -59,7 +54,7 @@ func openBadgerDB(path string) (*badger.DB, error) {
 
 func openBoltDB(path string) (*bolt.DB, error) {
 
-	db, err := bolt.Open("my.db", 0600, nil)
+	db, err := bolt.Open(path, 0600, nil)
 	if err := createBucket(db); err != nil {
 		return db, err
 	}

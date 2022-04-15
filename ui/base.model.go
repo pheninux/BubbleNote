@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"BubbleNote/pkg/model"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -8,8 +9,8 @@ type Model struct {
 	Page        Pages
 	Cp          int // page cursor
 	NoteService interface {
-		SaveNote(note string) error
-		NoteList() string
+		SaveNote(n model.Note) error
+		NoteList() (string, int)
 	}
 }
 

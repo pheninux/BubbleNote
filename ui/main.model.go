@@ -5,6 +5,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/muesli/termenv"
+	"strconv"
 	"strings"
 )
 
@@ -51,6 +52,7 @@ func (m *Model) UpdateMainPage(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *Model) ViewMainPage() string {
+
 	choicesTpl := strings.Builder{}
 	choice := ""
 	// block note choices : choice tpl
@@ -62,15 +64,6 @@ func (m *Model) ViewMainPage() string {
 		} else {
 			choice = v
 		}
-		//if m.cp == 0 {
-		//	if _, ok := m.selected[i]; ok {
-		//		if m.choiseCursor == 0 {
-		//			return m.notePageView()
-		//		} else {
-		//			return m.listPageView()
-		//		}
-		//	}
-		//}
 		choicesTpl.WriteString(fmt.Sprintf("%s %s", cursor, choice))
 	}
 
@@ -78,5 +71,6 @@ func (m *Model) ViewMainPage() string {
 }
 
 func (m *Model) mainHelpView() string {
-	return fmt.Sprintf("\n\n total notes : %v \n tab: switch modes • q: exit", lipgloss.NewStyle().Foreground(lipgloss.Color("#0FE066")).Render("12"))
+	_, t := m.NoteService.NoteList()
+	return fmt.Sprintf("\n\n total notes : %s \n tab: switch modes • q: exit", lipgloss.NewStyle().Foreground(lipgloss.Color("#0FE066")).Render(strconv.Itoa(t)))
 }
