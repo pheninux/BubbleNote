@@ -2,6 +2,8 @@ package ui
 
 import (
 	"fmt"
+	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/muesli/termenv"
@@ -11,6 +13,8 @@ import (
 
 type Main struct {
 	selectedChoice int
+	help           help.Model
+	mainKeyMap     mainKeyMap
 }
 
 var (
@@ -18,6 +22,28 @@ var (
 	normalStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
 	with         = 200
 )
+
+type mainKeyMap struct {
+	tab  key.Binding
+	quit key.Binding
+}
+
+func (m *Model) NewMainModel() Main {
+
+	return Main{mainKeyMap: InitMainKeyMap(), help: help.New()}
+}
+
+func InitMainKeyMap() mainKeyMap {
+
+	return mainKeyMap{
+		tab: key.NewBinding(
+			key.WithKeys("tab"),
+			key.WithHelp("tab", "switch")),
+		quit: key.NewBinding(
+			key.WithKeys("ctrl+q"),
+			key.WithHelp("ctrl+q", "exit programme")),
+	}
+}
 
 func (m *Model) InitMainPage() tea.Cmd {
 	return func() tea.Msg {
@@ -37,6 +63,8 @@ func (m *Model) UpdateMainPage(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.Page.Main.selectedChoice--
 			}
+		case "ctrl+z":
+
 		case "enter":
 			switch m.Page.Main.selectedChoice {
 			case 0:
@@ -72,5 +100,9 @@ func (m *Model) ViewMainPage() string {
 
 func (m *Model) mainHelpView() string {
 	_, t := m.NoteService.NoteList()
-	return fmt.Sprintf("\n\n total notes : %s \n tab: switch modes • q: exit", lipgloss.NewStyle().Foreground(lipgloss.Color("#0FE066")).Render(strconv.Itoa(t)))
+	return fmt.Sprintf("\n\n total notes : %s \n %s", lipgloss.NewStyle().Foreground(lipgloss.Color("#0FE066")).Render(strconv.Itoa(t)),
+		m.Page.Main.help.ShortHelpView([]key.Binding{
+			m.Page.Main.mainKeyMap.quit,
+			m.Page.Main.mainKeyMap.tab,
+		}))
 }

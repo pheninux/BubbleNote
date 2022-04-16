@@ -21,7 +21,7 @@ func main() {
 	m := ui.Model{}
 	m = ui.Model{
 		Page: ui.Pages{
-			Main: ui.Main{},
+			Main: m.NewMainModel(),
 			Note: m.NewNoteModel(),
 			List: ui.List{},
 		},
@@ -29,7 +29,7 @@ func main() {
 		NoteService: &dao.NoteRepo{Db: db},
 	}
 	if err := tea.NewProgram(&m).Start(); err != nil {
-		panic(err)
+
 	}
 }
 
