@@ -18,8 +18,8 @@ func main() {
 	}
 	defer db.Close()
 
-	m := ui.Model{}
-	m = ui.Model{
+	m := ui.StateManager{}
+	m = ui.StateManager{
 		Page: ui.Pages{
 			Main: m.NewMainModel(),
 			Note: m.NewNoteModel(),
@@ -28,7 +28,7 @@ func main() {
 		Cp:          0,
 		NoteService: &dao.NoteRepo{Db: db},
 	}
-	if err := tea.NewProgram(&m).Start(); err != nil {
+	if err := tea.NewProgram(&m, tea.WithAltScreen()).Start(); err != nil {
 
 	}
 }

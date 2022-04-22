@@ -43,7 +43,7 @@ func InitNoteKeyMap() notKeyMap {
 	}
 }
 
-func (m *Model) NewNoteModel() Note {
+func (sm *StateManager) NewNoteModel() Note {
 	ti := textinput.New()
 	ti.Placeholder = "Write your note"
 	ti.Focus()
@@ -56,28 +56,28 @@ func (m *Model) NewNoteModel() Note {
 	return Note{Ti: ti, noteKeyMap: InitNoteKeyMap(), help: help.New()}
 }
 
-func (m *Model) InitNotePage() tea.Cmd {
+func (sm *StateManager) InitNotePage() tea.Cmd {
 	return func() tea.Msg {
 		return nil
 	}
 }
 
-func (m *Model) UpdateNotePage(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (sm *StateManager) UpdateNotePage(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
-		case key.Matches(msg, m.Page.Note.noteKeyMap.quit):
-			return m, tea.Quit
-		case key.Matches(msg, m.Page.Note.noteKeyMap.previous):
-			m.Cp = MAIN_PAGE
-		case key.Matches(msg, m.Page.Note.noteKeyMap.new):
+		case key.Matches(msg, sm.Page.Note.noteKeyMap.quit):
+			return sm, tea.Quit
+		case key.Matches(msg, sm.Page.Note.noteKeyMap.previous):
+			sm.Cp = MAIN_PAGE
+		case key.Matches(msg, sm.Page.Note.noteKeyMap.new):
 		//todo impliment new note
-		case key.Matches(msg, m.Page.Note.noteKeyMap.save):
+		case key.Matches(msg, sm.Page.Note.noteKeyMap.save):
 			n := model.Note{}
-			n.Content = m.Page.Note.Ti.Value()
+			n.Content = sm.Page.Note.Ti.Value()
 			n.CreatedAt = time.Now()
-			if err := m.NoteService.SaveNote(n); err != nil {
+			if err := sm.NoteService.SaveNote(n); err != nil {
 				fmt.Println(err)
 			} else {
 				fmt.Println("success")
@@ -87,25 +87,25 @@ func (m *Model) UpdateNotePage(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		with = msg.Width
 	}
-	m.Page.Note.Ti, cmd = m.Page.Note.Ti.Update(msg)
-	return m, cmd
+	sm.Page.Note.Ti, cmd = sm.Page.Note.Ti.Update(msg)
+	return sm, cmd
 }
 
-func (m *Model) ViewNotePage() string {
+func (sm *StateManager) ViewNotePage() string {
 
 	ui := strings.Builder{}
-	ui.WriteString(m.titleView())
-	ui.WriteString(m.Page.Note.Ti.View())
-	ui.WriteString(m.notehelpView())
+	ui.WriteString(sm.titleView())
+	ui.WriteString(sm.Page.Note.Ti.View())
+	ui.WriteString(sm.notehelpView())
 	return lipgloss.NewStyle().Align(lipgloss.Center).Width(with - 2).Render(ui.String())
 }
 
-func (m *Model) notehelpView() string {
+func (sm *StateManager) notehelpView() string {
 	return fmt.Sprintf("\n\n total notes : %v \n\n %s", lipgloss.NewStyle().Foreground(lipgloss.Color("#0FE066")).Render("12"),
-		m.Page.Note.help.ShortHelpView([]key.Binding{
-			m.Page.Note.noteKeyMap.previous,
-			m.Page.Note.noteKeyMap.new,
-			m.Page.Note.noteKeyMap.save,
-			m.Page.Note.noteKeyMap.quit,
+		sm.Page.Note.help.ShortHelpView([]key.Binding{
+			sm.Page.Note.noteKeyMap.previous,
+			sm.Page.Note.noteKeyMap.new,
+			sm.Page.Note.noteKeyMap.save,
+			sm.Page.Note.noteKeyMap.quit,
 		}))
 }

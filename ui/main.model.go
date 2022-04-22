@@ -28,7 +28,7 @@ type mainKeyMap struct {
 	quit key.Binding
 }
 
-func (m *Model) NewMainModel() Main {
+func (sm *StateManager) NewMainModel() Main {
 
 	return Main{mainKeyMap: InitMainKeyMap(), help: help.New()}
 }
@@ -45,48 +45,48 @@ func InitMainKeyMap() mainKeyMap {
 	}
 }
 
-func (m *Model) InitMainPage() tea.Cmd {
+func (sm *StateManager) InitMainPage() tea.Cmd {
 	return func() tea.Msg {
 		return nil
 	}
 }
 
-func (m *Model) UpdateMainPage(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (sm *StateManager) UpdateMainPage(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+q":
-			return m, tea.Quit
+			return sm, tea.Quit
 		case "tab":
-			if m.Page.Main.selectedChoice == 0 {
-				m.Page.Main.selectedChoice++
+			if sm.Page.Main.selectedChoice == 0 {
+				sm.Page.Main.selectedChoice++
 			} else {
-				m.Page.Main.selectedChoice--
+				sm.Page.Main.selectedChoice--
 			}
 		case "ctrl+z":
 
 		case "enter":
-			switch m.Page.Main.selectedChoice {
+			switch sm.Page.Main.selectedChoice {
 			case 0:
-				m.Cp = 1
+				sm.Cp = 1
 			case 1:
-				m.Cp = 2
+				sm.Cp = 2
 			}
 		}
 	case tea.WindowSizeMsg:
 		with = msg.Width
 	}
-	return m, nil
+	return sm, nil
 }
 
-func (m *Model) ViewMainPage() string {
+func (sm *StateManager) ViewMainPage() string {
 
 	choicesTpl := strings.Builder{}
 	choice := ""
 	// block note choices : choice tpl
 	for i, v := range choices {
 		cursor := " "
-		if m.Page.Main.selectedChoice == i {
+		if sm.Page.Main.selectedChoice == i {
 			cursor = ">"
 			choice = termenv.String(v).Foreground(termenv.EnvColorProfile().Color("121")).String()
 		} else {
@@ -95,14 +95,15 @@ func (m *Model) ViewMainPage() string {
 		choicesTpl.WriteString(fmt.Sprintf("%s %s", cursor, choice))
 	}
 
-	return lipgloss.JoinVertical(lipgloss.Center, m.titleView(), lipgloss.NewStyle().Align(lipgloss.Left).Render(choicesTpl.String()), m.mainHelpView())
+	return lipgloss.JoinVertical(lipgloss.Center, sm.titleView(), lipgloss.NewStyle().Align(lipgloss.Left).MarginTop(3).Render(choicesTpl.String()), sm.mainHelpView())
+
 }
 
-func (m *Model) mainHelpView() string {
-	_, t := m.NoteService.NoteList()
-	return fmt.Sprintf("\n\n total notes : %s \n %s", lipgloss.NewStyle().Foreground(lipgloss.Color("#0FE066")).Render(strconv.Itoa(t)),
-		m.Page.Main.help.ShortHelpView([]key.Binding{
-			m.Page.Main.mainKeyMap.quit,
-			m.Page.Main.mainKeyMap.tab,
+func (sm *StateManager) mainHelpView() string {
+	_, t := sm.NoteService.NoteList()
+	return fmt.Sprintf("\n\n total notes : %s \n\n\n %s", lipgloss.NewStyle().Foreground(lipgloss.Color("#0FE066")).Render(strconv.Itoa(t)),
+		sm.Page.Main.help.ShortHelpView([]key.Binding{
+			sm.Page.Main.mainKeyMap.quit,
+			sm.Page.Main.mainKeyMap.tab,
 		}))
 }

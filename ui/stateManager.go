@@ -5,7 +5,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type Model struct {
+type StateManager struct {
 	Page        Pages
 	Cp          int // page cursor
 	NoteService interface {
@@ -30,34 +30,34 @@ const (
 	LIST_PAGE
 )
 
-func (m *Model) Init() tea.Cmd {
+func (sm *StateManager) Init() tea.Cmd {
 
 	return func() tea.Msg {
 		return nil
 	}
 }
 
-func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (sm *StateManager) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
-	switch m.Cp {
+	switch sm.Cp {
 	case MAIN_PAGE:
-		return m.UpdateMainPage(msg)
+		return sm.UpdateMainPage(msg)
 	case NOTE_PAGE:
-		return m.UpdateNotePage(msg)
+		return sm.UpdateNotePage(msg)
 	case LIST_PAGE:
-		return m.UpdateListPage(msg)
+		return sm.UpdateListPage(msg)
 	}
-	return m, nil
+	return sm, nil
 }
 
-func (m *Model) View() string {
-	switch m.Cp {
+func (sm *StateManager) View() string {
+	switch sm.Cp {
 	case MAIN_PAGE:
-		return m.ViewMainPage()
+		return sm.ViewMainPage()
 	case NOTE_PAGE:
-		return m.ViewNotePage()
+		return sm.ViewNotePage()
 	case LIST_PAGE:
-		return m.ViewListPage()
+		return sm.ViewListPage()
 	case 5:
 		return "error when saving note"
 	case 6:

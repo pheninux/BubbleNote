@@ -8,29 +8,29 @@ import (
 type List struct {
 }
 
-func (m *Model) InitListPage() tea.Cmd {
+func (sm *StateManager) InitListPage() tea.Cmd {
 	return func() tea.Msg {
 		return nil
 	}
 }
 
-func (m *Model) UpdateListPage(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (sm *StateManager) UpdateListPage(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+q", "ctrl+c":
-			return m, tea.Quit
+			return sm, tea.Quit
 		case "ctrl+r":
-			m.Cp = MAIN_PAGE
+			sm.Cp = MAIN_PAGE
 		case "l":
-			fmt.Println(m.NoteService.NoteList())
+			fmt.Println(sm.NoteService.NoteList())
 		}
 	case tea.WindowSizeMsg:
 		with = msg.Width
 	}
-	return m, nil
+	return sm, nil
 }
 
-func (m *Model) ViewListPage() string {
+func (sm *StateManager) ViewListPage() string {
 	return "list page"
 }
