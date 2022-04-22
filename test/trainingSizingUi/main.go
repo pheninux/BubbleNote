@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"strings"
@@ -50,13 +49,34 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *model) View() string {
-	fmt.Sprintf(" w : %v .  h :  %v", m.with, m.height)
+
+	//column := m.with / 3
 	ui := strings.Builder{}
-	ui.WriteString(lipgloss.Place(m.with, m.height, lipgloss.Bottom, lipgloss.Bottom, lipgloss.JoinHorizontal(lipgloss.Center,
+	ui.WriteString(lipgloss.Place(m.with, (m.height-m.height)+1, lipgloss.Center, lipgloss.Top, lipgloss.JoinHorizontal(lipgloss.Center,
 		m.bar.status,
 		msgStyle.Width(m.with-(w(m.bar.status)+w(m.bar.version)+w(m.bar.encoding))).Render("EN COUR"),
 		m.bar.encoding,
-		m.bar.version)))
+		m.bar.version), lipgloss.WithWhitespaceChars("#"), lipgloss.WithWhitespaceForeground(lipgloss.Color("34"))))
+
+	/*ui.WriteString(lipgloss.Place(m.with, (m.height-m.height)+1, lipgloss.Right,
+	lipgloss.Center,
+	lipgloss.NewStyle().MarginTop(5).Foreground(lipgloss.Color("57")).Render("coucou")))*/
+
+	col1 := lipgloss.Place(5, 3,
+		lipgloss.Left,
+		lipgloss.Center,
+		lipgloss.NewStyle().Background(lipgloss.Color("57")).Padding(0, 1).MarginRight(1).Render("Wikipédia est une encyclopédie universelle et multilingue créée par Jimmy Wales et Larry Sanger le 15 janvier 2001. Il s'agit d'une œuvre libre, c'est-à-dire que chacun est libre de la rediffuser. Gérée en wiki dans le site web wikipedia.org grâce au logiciel MediaWiki, elle \n"))
+
+	col2 := lipgloss.Place(5, 12,
+		lipgloss.Left,
+		lipgloss.Center,
+		lipgloss.NewStyle().Background(lipgloss.Color("24")).Padding(0, 1).MarginRight(1).Render("Wikipédia est une encyclopédie universelle et multilingue créée par Jimmy Wales et Larry Sanger le 15 janvier 2001. Il s'agit d'une œuvre libre, c'est-à-dire que chacun est libre de la rediffuser. Gérée en wiki dans le site web wikipedia.org grâce au logiciel MediaWiki, elle permet à tous les internautes d'écrire et de modifier des articles, ce qui lui"))
+
+	col3 := lipgloss.Place(5, 12,
+		lipgloss.Left,
+		lipgloss.Center,
+		lipgloss.NewStyle().Background(lipgloss.Color("10")).Padding(0, 1).MarginRight(1).Render("Wikipédia est une encyclopédie universelle et multilingue créée par Jimmy Wales et Larry Sanger le 15 janvier 2001. Il s'agit d'une œuvre libre, c'est-à-dire que chacun est libre de la rediffuser. Gérée en wiki dans le site web wikipedia.org grâce au logiciel MediaWiki, elle permet à tous les internautes d'écrire et de modifier des articles, ce qui lui"))
+	ui.WriteString(lipgloss.JoinHorizontal(lipgloss.Left, col1, col2, col3))
 	return ui.String()
 }
 
