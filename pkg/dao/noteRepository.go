@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/boltdb/bolt"
-	"strings"
 )
 
 type NoteRepo struct {
@@ -28,9 +27,9 @@ func (nr *NoteRepo) SaveNote(n model.Note) error {
 	return err
 }
 
-func (nr *NoteRepo) NoteList() (string, int) {
+func (nr *NoteRepo) NoteList() (l []model.Note, t int, err error) {
 	total := 0
-	result := strings.Builder{}
+
 	nr.Db.View(func(tx *bolt.Tx) error {
 		// Assume bucket exists and has keys
 		b := tx.Bucket([]byte("notes"))
@@ -38,10 +37,12 @@ func (nr *NoteRepo) NoteList() (string, int) {
 		c := b.Cursor()
 
 		for k, v := c.First(); k != nil; k, v = c.Next() {
-			result.WriteString(fmt.Sprintf("key=%v, value=%s\n", k, v))
+			n := model.Note{}
+			err = json.Unmarshal([]byte(v), &n)
+			l = append(l, n)
 			total++
 		}
 		return nil
 	})
-	return result.String(), total
+	return l, total, err
 }
