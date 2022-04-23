@@ -13,6 +13,11 @@ var (
 		Light: "#CACAC6",
 		Dark:  "#DCDCD5",
 	})
+	columnStyle = lipgloss.NewStyle().
+			Align(lipgloss.Left).
+			MarginRight(1).
+			Background(lipgloss.Color("23")).
+			Padding(0, 1)
 	textFg        = lipgloss.NewStyle().Foreground(lipgloss.Color("#FEFFFE")).Padding(0, 1)
 	statusStyle   = textFg.Copy().Inherit(barStyleColor).Background(lipgloss.Color("#EA52BC"))
 	msgStyle      = textFg.Copy().Inherit(barStyleColor)

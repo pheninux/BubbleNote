@@ -62,20 +62,22 @@ func (m *model) View() string {
 	lipgloss.Center,
 	lipgloss.NewStyle().MarginTop(5).Foreground(lipgloss.Color("57")).Render("coucou")))*/
 
-	col1 := lipgloss.Place(5, 3,
-		lipgloss.Left,
-		lipgloss.Center,
-		lipgloss.NewStyle().Background(lipgloss.Color("57")).Padding(0, 1).MarginRight(1).Render("Wikipédia est une encyclopédie universelle et multilingue créée par Jimmy Wales et Larry Sanger le 15 janvier 2001. Il s'agit d'une œuvre libre, c'est-à-dire que chacun est libre de la rediffuser. Gérée en wiki dans le site web wikipedia.org grâce au logiciel MediaWiki, elle \n"))
+	col1 := columnStyle.Width(m.with / 3).
+		Render("Wikipédia est une encyclopédie universelle et multilingue créée p" +
+			"ar Jimmy Wales et Larry Sanger le 15 janvier 2001. Il s'agit d'une œuvre libre, c'est-à-dire que " +
+			"chacun est libre de la rediffuser. Gérée en wiki dans le site web wikipedia.org grâce au logiciel " +
+			"MediaWiki, elle permet à tous les internautes d'écrire et de modifier des articles, ce qui lui")
+	col2 := columnStyle.Width(m.with / 3).
+		Render("Wikipédia est une encyclopédie universelle et multilingue créée p" +
+			"ar Jimmy Wales et Larry Sanger le 15 janvier 2001. Il s'agit d'une œuvre libre, c'est-à-dire que " +
+			"chacun est libre de la rediffuser. Gérée en wiki dans le site web wikipedia.org grâce au logiciel " +
+			"MediaWiki, elle permet à tous les internautes d'écrire et de modifier des articles, ce qui lui")
+	col3 := columnStyle.Width(m.with / 3).
+		Render("Wikipédia est une encyclopédie universelle et multilingue créée p" +
+			"ar Jimmy Wales et Larry Sanger le 15 janvier 2001. Il s'agit d'une œuvre libre, c'est-à-dire que " +
+			"chacun est libre de la rediffuser. Gérée en wiki dans le site web wikipedia.org grâce au logiciel " +
+			"MediaWiki, elle permet à tous les internautes d'écrire et de modifier des articles, ce qui lui")
 
-	col2 := lipgloss.Place(5, 12,
-		lipgloss.Left,
-		lipgloss.Center,
-		lipgloss.NewStyle().Background(lipgloss.Color("24")).Padding(0, 1).MarginRight(1).Render("Wikipédia est une encyclopédie universelle et multilingue créée par Jimmy Wales et Larry Sanger le 15 janvier 2001. Il s'agit d'une œuvre libre, c'est-à-dire que chacun est libre de la rediffuser. Gérée en wiki dans le site web wikipedia.org grâce au logiciel MediaWiki, elle permet à tous les internautes d'écrire et de modifier des articles, ce qui lui"))
-
-	col3 := lipgloss.Place(5, 12,
-		lipgloss.Left,
-		lipgloss.Center,
-		lipgloss.NewStyle().Background(lipgloss.Color("10")).Padding(0, 1).MarginRight(1).Render("Wikipédia est une encyclopédie universelle et multilingue créée par Jimmy Wales et Larry Sanger le 15 janvier 2001. Il s'agit d'une œuvre libre, c'est-à-dire que chacun est libre de la rediffuser. Gérée en wiki dans le site web wikipedia.org grâce au logiciel MediaWiki, elle permet à tous les internautes d'écrire et de modifier des articles, ce qui lui"))
 	ui.WriteString(lipgloss.JoinHorizontal(lipgloss.Left, col1, col2, col3))
 	return ui.String()
 }
